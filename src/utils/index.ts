@@ -1,3 +1,5 @@
+export { loadAssets } from './pixi';
+
 export enum Direction {
     Left = 1,
     Right = 2,
@@ -27,3 +29,4 @@ export function updatePositionWithDirection(
     }
     return value;
 }
+

@@ -10,10 +10,10 @@ async function init() {
     if (!rootElement) throw new Error("React root not found");
     const root = ReactDOM.createRoot(rootElement as HTMLElement);
 
-    const setupResult = await setup();
+    // const setupResult = await setup();
     root.render(
         <React.StrictMode>
-            <DojoProvider value={setupResult}>
+            <DojoProvider value={{}}>
                 <App />
             </DojoProvider>
         </React.StrictMode>

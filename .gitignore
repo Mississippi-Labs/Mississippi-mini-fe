@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.idea
+
+/public/assets/img/**/*.meta

@@ -6,17 +6,34 @@ import fightIcon from '@/assets/img/fight-icon.png';
 import Dialog from '@/pages/ffa/dialog';
 import DuelField from '@/components/DuelField';
 import { playerA, playerB } from '@/mock/data';
-import { ethers } from 'ethers';
+import { useEntityQuery } from '@dojoengine/react'
+import { Has } from "@dojoengine/recs";
+import { useDojo } from "../../DojoContext";
 
-import miniAbi from '@/abi/mississippi_mini-game.json';
-
-const rpc = 'https://starknet-goerli.infura.io/v3/5ca372516740427e97512d4dfefd9c47';
-const key = '0x1374ef8311b490e1a3ae8e63f4cb1c602e6620d4a7bd87c66c44152b27770b4';
 
 const FFA = () => {
+  const {
+    setup: {
+      components: { Config, Global, Player },
+    },
+    account: {
+      create,
+      list,
+      select,
+      account,
+      isDeploying,
+      clear,
+      copyToClipboard,
+      applyFromClipboard,
+    },
+  } = useDojo()
 
+  const configData = useEntityQuery([Has(Config)])
+  const GlobalData = useEntityQuery([Has(Global)])
+  const PlayerData = useEntityQuery([Has(Player)])
+  console.log(configData, GlobalData, PlayerData)
+  
   const [tab, setTab] = useState('home');
-
   const [dialogVisible, setDialogVisible] = useState(false);
   const [battleVisible, setBattleVisible] = useState(false);
   const battleRef = useRef();

@@ -3,39 +3,136 @@
 import { defineComponent, Type as RecsType, World } from "@dojoengine/recs";
 
 export function defineContractComponents(world: World) {
-    return {
-        Moves: (() => {
-            return defineComponent(
-                world,
-                {
-                    player: RecsType.BigInt,
-                    remaining: RecsType.Number,
-                    last_direction: RecsType.Number,
-                },
-                {
-                    metadata: {
-                        name: "Moves",
-                        types: ["contractaddress", "u8", "enum"],
-                        customTypes: ["Direction"],
-                    },
-                }
-            );
-        })(),
-        Position: (() => {
-            return defineComponent(
-                world,
-                {
-                    player: RecsType.BigInt,
-                    vec: { x: RecsType.Number, y: RecsType.Number },
-                },
-                {
-                    metadata: {
-                        name: "Position",
-                        types: ["contractaddress", "u32", "u32"],
-                        customTypes: ["Vec2"],
-                    },
-                }
-            );
-        })(),
-    };
+  return {
+	  BattleInfo: (() => {
+	    return defineComponent(
+	      world,
+	      { battleId: RecsType.Number, is_attacker: RecsType.Boolean, addr: RecsType.BigInt, hp: RecsType.Number, attack: RecsType.Number, defense: RecsType.Number, hit: RecsType.Number, crit: RecsType.Number, dodge: RecsType.Number, speed: RecsType.Number, skillId: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "BattleInfo",
+	          types: ["u32","bool","contractaddress","u32","u32","u32","u32","u32","u32","u32","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+	  BattleResult: (() => {
+	    return defineComponent(
+	      world,
+	      { battleId: RecsType.Number, winner: RecsType.BigInt },
+	      {
+	        metadata: {
+	          name: "BattleResult",
+	          types: ["u32","contractaddress"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+	  Config: (() => {
+	    return defineComponent(
+	      world,
+	      { id: RecsType.Number, battleId: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Config",
+	          types: ["u32","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+	  Global: (() => {
+	    return defineComponent(
+	      world,
+	      { id: RecsType.Number, battleId: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Global",
+	          types: ["u32","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+	  Moves: (() => {
+	    return defineComponent(
+	      world,
+	      { player: RecsType.BigInt, remaining: RecsType.Number, last_direction: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Moves",
+	          types: ["contractaddress","u8","enum"],
+	          customTypes: ["Direction"],
+	        },
+	      }
+	    );
+	  })(),
+	  Player: (() => {
+	    return defineComponent(
+	      world,
+	      { addr: RecsType.BigInt, name: RecsType.BigInt, roleId: RecsType.Number, skillId: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Player",
+	          types: ["contractaddress","felt252","u32","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+	  Position: (() => {
+	    return defineComponent(
+	      world,
+	      { player: RecsType.BigInt, vec: { x: RecsType.Number, y: RecsType.Number } },
+	      {
+	        metadata: {
+	          name: "Position",
+	          types: ["contractaddress","u32","u32"],
+	          customTypes: ["Vec2"],
+	        },
+	      }
+	    );
+	  })(),
+	  Role: (() => {
+	    return defineComponent(
+	      world,
+	      { id: RecsType.Number, hp: RecsType.Number, attack: RecsType.Number, defense: RecsType.Number, hit: RecsType.Number, dodge: RecsType.Number, crit: RecsType.Number, speed: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Role",
+	          types: ["u32","u32","u32","u32","u32","u32","u32","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+	  Room: (() => {
+	    return defineComponent(
+	      world,
+	      { roomId: RecsType.Number, battleId: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Room",
+	          types: ["u32","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+	  Skill: (() => {
+	    return defineComponent(
+	      world,
+	      { id: RecsType.Number, value: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "Skill",
+	          types: ["u32","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
+  };
 }

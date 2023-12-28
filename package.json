@@ -9,7 +9,7 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "codegen": "graphql-codegen",
-    "create-components": "npx @dojoengine/core src/abi/manifest.json src/dojo/contractComponents.ts https://starknet-goerli.infura.io/v3/5ca372516740427e97512d4dfefd9c47 0x1374ef8311b490e1a3ae8e63f4cb1c602e6620d4a7bd87c66c44152b27770b4"
+    "create-components": "npx @dojoengine/core src/abi/manifest.json src/dojo/contractComponents.ts https://api.cartridge.gg/x/mississippi/katana 0x50e919280237662adbfc9e2296c67ec4c86e3ac48e702bae1284814b548f2ae"
   },
   "dependencies": {
     "@dojoengine/core": "0.2.10",

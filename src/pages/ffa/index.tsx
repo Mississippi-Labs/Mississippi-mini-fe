@@ -15,6 +15,7 @@ const FFA = () => {
   const {
     setup: {
       components: { Config, Global, Player },
+      systemCalls: { spawn },
     },
     account: {
       create,
@@ -28,10 +29,10 @@ const FFA = () => {
     },
   } = useDojo()
 
-  const configData = useEntityQuery([Has(Config)])
+  const configData = useEntityQuery([Has(Config)], {updateOnValueChange: true})
   const GlobalData = useEntityQuery([Has(Global)])
   const PlayerData = useEntityQuery([Has(Player)])
-  console.log(configData, GlobalData, PlayerData)
+  console.log(configData, GlobalData, PlayerData, 'configData')
   
   const [tab, setTab] = useState('home');
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -39,6 +40,7 @@ const FFA = () => {
   const battleRef = useRef();
 
   useEffect(() => {
+    // spawn(account)
     try {
       // const provider = new ethers.providers.JsonRpcProvider(rpc)
       // const wallet = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);

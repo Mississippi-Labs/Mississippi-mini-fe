@@ -22,13 +22,13 @@ export function createSystemCalls(
         }
     };
 
-    const initSkill = async (signer: Account, skill:any) => {
+    const initSkill = async (signer: Account) => {
         try {
             let {transaction_hash} = await execute(
                 signer,
                 "mississippi_mini::config::config",
                 "init_skill",
-                [skill]
+                []
             );
         } catch (e) {
             console.log(e);

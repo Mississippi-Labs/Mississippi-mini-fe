@@ -14,8 +14,8 @@ import { set } from 'mobx';
 const FFA = () => {
   const {
     setup: {
-      components: { BattleInfo, BattleResult, Player, Skill, Role },
-      systemCalls: { chooseSkill, chooseRole, startBattle },
+      components: { BattleInfo, BattleResult, Player, Skill, Role, Global },
+      systemCalls: { chooseSkill, chooseRole, startBattle, initRole, initSkill },
     },
     account: {
       clear,
@@ -44,6 +44,8 @@ const FFA = () => {
   const BattleResultData = useEntityQuery([Has(BattleResult)]).map((entity) => getComponentValue(BattleResult, entity));
   console.log(SkillData, RoleData, PlayerData, 'SkillData')
   console.log(BattleInfoData, BattleResultData, 'BattleInfoData')
+  const GlobalData = useEntityQuery([Has(Global)]).map((entity) => getComponentValue(Global, entity));
+  console.log(GlobalData, 'GlobalData')
 
   const curPlayer = PlayerData.find((player: any) => player.addr.toLocaleLowerCase() == account.address.toLocaleLowerCase()) || {};
   
@@ -119,6 +121,7 @@ const FFA = () => {
     if (isFirst != 2) {
       init()
     }
+
   }, [])
 
   return (
@@ -234,15 +237,15 @@ const FFA = () => {
             <div className="skill-list">
               <div className="skill-item" onClick={() => setSkillId(0)}>
                 <div className="placeholder" style={{borderColor: skillId == 0 ? 'red' : '#DCC7AF'}}></div>
-                <div>HP Boost</div>
+                <div>Chain ATK</div>
               </div>
               <div className="skill-item" onClick={() => setSkillId(1)}>
                 <div className="placeholder" style={{borderColor: skillId == 1 ? 'red' : '#DCC7AF'}}></div>
-                <div>SPD Surge</div>
+                <div>HP Boost</div>
               </div>
               <div className="skill-item" onClick={() => setSkillId(2)}>
                 <div className="placeholder" style={{borderColor: skillId == 2 ? 'red' : '#DCC7AF'}}></div>
-                <div>Chain ATK</div>
+                <div>SPD Surge</div>
               </div>
             </div>
             <div className="desc">

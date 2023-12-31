@@ -17,6 +17,19 @@ export function defineContractComponents(world: World) {
 	      }
 	    );
 	  })(),
+	  BattleRank: (() => {
+	    return defineComponent(
+	      world,
+	      { addr: RecsType.BigInt, score: RecsType.Number },
+	      {
+	        metadata: {
+	          name: "BattleRank",
+	          types: ["contractaddress","u32"],
+	          customTypes: [],
+	        },
+	      }
+	    );
+	  })(),
 	  BattleResult: (() => {
 	    return defineComponent(
 	      world,
@@ -56,19 +69,6 @@ export function defineContractComponents(world: World) {
 	      }
 	    );
 	  })(),
-	  Moves: (() => {
-	    return defineComponent(
-	      world,
-	      { player: RecsType.BigInt, remaining: RecsType.Number, last_direction: RecsType.Number },
-	      {
-	        metadata: {
-	          name: "Moves",
-	          types: ["contractaddress","u8","enum"],
-	          customTypes: ["Direction"],
-	        },
-	      }
-	    );
-	  })(),
 	  Player: (() => {
 	    return defineComponent(
 	      world,
@@ -82,19 +82,6 @@ export function defineContractComponents(world: World) {
 	      }
 	    );
 	  })(),
-	  Position: (() => {
-	    return defineComponent(
-	      world,
-	      { player: RecsType.BigInt, vec: { x: RecsType.Number, y: RecsType.Number } },
-	      {
-	        metadata: {
-	          name: "Position",
-	          types: ["contractaddress","u32","u32"],
-	          customTypes: ["Vec2"],
-	        },
-	      }
-	    );
-	  })(),
 	  Role: (() => {
 	    return defineComponent(
 	      world,
@@ -103,19 +90,6 @@ export function defineContractComponents(world: World) {
 	        metadata: {
 	          name: "Role",
 	          types: ["u32","u32","u32","u32","u32","u32","u32","u32"],
-	          customTypes: [],
-	        },
-	      }
-	    );
-	  })(),
-	  Room: (() => {
-	    return defineComponent(
-	      world,
-	      { roomId: RecsType.Number, battleId: RecsType.Number },
-	      {
-	        metadata: {
-	          name: "Room",
-	          types: ["u32","u32"],
 	          customTypes: [],
 	        },
 	      }

@@ -23,19 +23,19 @@ export interface IDuelFieldMethod {
 }
 
 
-const DuelField = React.forwardRef<IDuelFieldMethod>((props: IProps, ref) => {
+const DuelField = React.forwardRef<IDuelFieldMethod>((props: any, ref) => {
 
   const { leftPlayer, rightPlayer, afterAttack } = props;
   const [leftAction, setLeftAction] = useState<ActionType>('idle');
   const [rightAction, setRightAction] = useState<ActionType>('idle');
-  const textureMap = useRef({
+  const textureMap:any = useRef({
     magic: null,
     sprint: null,
     sneak: null
   });
   const [frameIndex, setFrameIndex] = useState(0);
   const frameInterval = useRef<NodeJS.Timeout>();
-  const [attackType, setAttackType] = useState<AttackType>(null);
+  const [attackType, setAttackType] = useState<any>(null);
   const [effectPositionX, setEffectPositionX] = useState(200);
 
   useImperativeHandle(ref, () => ({
@@ -86,8 +86,8 @@ const DuelField = React.forwardRef<IDuelFieldMethod>((props: IProps, ref) => {
   }, [attackType]);
 
   const loadTexture = (type: AttackType) => {
-    loadAssets(`/assets/img/effect/${type}.png`, (assets) => {
-      const sheet = PIXI.Texture.from(assets);
+    loadAssets(`/assets/img/effect/${type}.png`, (assets:any) => {
+      const sheet:any = PIXI.Texture.from(assets);
       const textures = [];
       for (let i = 0; i < EffectFrameCount; i++) {
         const offsetX = (i % EffectCfg[type].col) * EffectCfg[type].width;

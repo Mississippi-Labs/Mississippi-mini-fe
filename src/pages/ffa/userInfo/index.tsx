@@ -1,13 +1,13 @@
 import './styles.scss';
 import * as PIXI from 'pixi.js';
 import { Stage } from '@pixi/react';
-import Player, { IPlayer } from '@/components/PIXIPlayers/Player';
+import Player from '@/components/PIXIPlayers/Player';
 
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
 export interface IUserInfo {
-  player?: IPlayer;
+  player?: any;
 }
 
 const UserInfo = (props: IUserInfo) => {

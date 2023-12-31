@@ -29,7 +29,7 @@ const FFA = () => {
   const RoleData = useEntityQuery([Has(Role)]).map((entity) => getComponentValue(Role, entity));
   const PlayerData:any = useEntityQuery([Has(Player)]).map((entity) => {
     let player = getComponentValue(Player, entity);
-    let addr = player?.addr;
+    let addr:any = player?.addr;
     const bn = BigInt(addr);
     const hex = bn.toString(16);
     let role = RoleData.find((role:any) => role.id == player?.roleId);
@@ -149,7 +149,7 @@ const FFA = () => {
               <div className="leaderboard-wrapper">
                 <ul className={'leaderboard-list'}>
                   {
-                    PlayerData.map((item, index) => (
+                    PlayerData.map((item:any, index:any) => (
                       <li className={'rank-row'} key={index}>
                         <div className="rank-num">{item.name.toString()}</div>
                         <div className="addr">{formatAddress(item.addr.toString())}</div>

@@ -24,4 +24,8 @@ dist-ssr
 *.sw?
 .idea
 
+*.lock
+*.lock.json
+*.lock.yaml
+
 /public/assets/img/**/*.meta

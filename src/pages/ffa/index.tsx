@@ -112,10 +112,11 @@ const FFA = () => {
       const newAccount = await create();
       console.log(newAccount, 'newAccount')
       select(newAccount.address);
+      localStorage.setItem('isFirst', '1');
     }
     let isFirst = localStorage.getItem('isFirst');
+    console.log(isFirst, 'isFirst')
     if (!isFirst) {
-      localStorage.setItem('isFirst', '1');
       init()
     }
   }, [])

@@ -9,6 +9,7 @@
 
     .right-main-content {
         width: 600px;
+        color: #fff;
     }
 
     .user-detail-content {
@@ -38,8 +39,8 @@
 
     .user-attr-wrapper {
         margin-right: 20px;
-        width: 180px;
-        padding: 20px 0;
+        width: 280px;
+        padding: 20px;
         font-size: 13px;
         line-height: 2;
 
@@ -49,14 +50,14 @@
         }
 
         dt {
-            padding-left: 20px;
+            //padding-left: 20px;
             margin-right: 10px;
             color: #BC8C61;
         }
 
         .base-attr {
             margin-right: 10px;
-            color: #000;
+            color: #fff;
         }
 
         &.loaded {
@@ -74,7 +75,15 @@
                 content: '+';
             }
         }
+
+        .skills-wrapper {
+            margin-top: 20px;
+
+
+        }
     }
+
+
 
     .mi-user-package {
         margin-bottom: 24px;
@@ -82,6 +91,9 @@
 
     .how-to-play {
         padding: 20px;
-        height: 338px;
+        //height: 338px;
+        font-size: 13px;
+        line-height: 2;
+        word-spacing: 8px;
     }
 }

@@ -47,6 +47,7 @@ export interface IPlayer {
   maxHp: number;
   name: string;
   url: string;
+  def: number;
   equip: {
     clothes: string;
     handheld: string;

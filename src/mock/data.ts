@@ -87,21 +87,22 @@ const warriorEquip = {
 export const playerA = {
   "x": 0.5,
   "y": 1.5,
-  "hp": 115,
-  "attack": 46,
+  "hp": 300,
+  "def": 40,
+  "attack": 100,
   "attackRange": 4,
-  "speed": 4,
+  "speed": 20,
   "strength": 35,
   "space": 3,
   "oreBalance": 0,
   "treasureBalance": 0,
   "state": 2,
   "lastBattleTime": 0,
-  "maxHp": 115,
-  "name": "V2",
+  "maxHp": 300,
+  "name": "Alice",
   "url": "",
   "addr": "0xb53c83ef2467da36c687c81cb23140d92e3d10ba",
-  "username": "V2",
+  "username": "Alice",
   "equip": warriorEquip,
   "waiting": false,
   "action": "idle",
@@ -112,24 +113,56 @@ export const playerA = {
 export const playerB = {
   "x": 5.1,
   "y": 1.5,
-  "hp": 135,
-  "attack": 40,
+  "hp": 400,
+  "def": 60,
+  "attack": 70,
   "attackRange": 3,
-  "speed": 4,
+  "speed": 18,
   "strength": 32,
   "space": 3,
   "oreBalance": 0,
   "treasureBalance": 0,
   "state": 2,
   "lastBattleTime": 0,
-  "maxHp": 135,
-  "name": "V",
+  "maxHp": 400,
+  "name": "BoB",
   "url": "",
   "addr": "0xb58fd9cb0c9100bb6694a4d18627fb238d3bb893",
-  "username": "V",
+  "username": "BoB",
   "equip": hunterEquip,
   "waiting": false,
   "action": "idle",
   "moving": false,
   "toward": "Left"
 }
+
+export const Rank1 = [
+  {
+    name: 'Bob',
+    address: '0x56..14',
+    win: 0,
+    lose: 0
+  },
+  {
+    name: 'Alice',
+    address: '0x34..35',
+    win: 0,
+    lose: 0
+  },
+];
+
+export const Rank2 = [
+  {
+    name: 'Alice',
+    address: '0x34..35',
+    win: 1,
+    lose: 0
+  },
+  {
+    name: 'Bob',
+    address: '0x56..14',
+    win: 0,
+    lose: 1
+  },
+
+];

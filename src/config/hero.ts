@@ -284,3 +284,18 @@ export const EffectCfg = {
 }
 
 export const MsgShowTime = 10;
+
+export const Skills = [
+  {
+    type: 'hp',
+    name: 'HP Boost',
+  },
+  {
+    type: 'spd',
+    name: 'SPD Surge',
+  },
+  {
+    type: 'atk',
+    name: 'Chain ATK',
+  },
+]

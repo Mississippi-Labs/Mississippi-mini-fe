@@ -1,6 +1,7 @@
 .ffa-dialog {
     position: fixed;
-    padding: 80px 40px;
+    z-index: 999;
+    padding: 80px;
     left: 50%;
     top: 50%;
     transform: translate3d(-50%, -50%, 0);

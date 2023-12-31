@@ -107,13 +107,17 @@ const FFA = () => {
   }, [curPlayer?.skillId])
 
   useEffect(() => {
-    // const init = async () => {
-    //   clear();
-    //   const newAccount = await create();
-    //   console.log(newAccount, 'newAccount')
-    //   select(newAccount.address);
-    // }
-    // init()
+    const init = async () => {
+      clear();
+      const newAccount = await create();
+      console.log(newAccount, 'newAccount')
+      select(newAccount.address);
+    }
+    let isFirst = localStorage.getItem('isFirst');
+    if (!isFirst) {
+      localStorage.setItem('isFirst', '1');
+      init()
+    }
   }, [])
 
   return (

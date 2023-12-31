@@ -70,10 +70,10 @@ export interface IPlayer {
 
 const Player = (props: IPlayer) => {
 
-  const { action = 'idle', size = cellSize, toward = 'Right', x = 0, y = 0, equip = {}, name, isPlaying = true, waiting = false,
+  const { action = 'idle', size = cellSize, toward = 'Right', x = 0, y = 0, equip, name, isPlaying = true, waiting = false,
     moving, hpVisible = false, hp, maxHp, hunted = false, onActionEnd } = props;
   const { clothes, handheld, head: cap } = equip;
-  const [textureMap, setTextureMap] = useState({
+  const [textureMap, setTextureMap] = useState<any>({
     body: null,
     eyes: null,
     hair: null,
@@ -90,11 +90,11 @@ const Player = (props: IPlayer) => {
   const frameInterval = useRef<NodeJS.Timeout>();
   const filterRef = useRef({ blink: new BlinkFilter() });
   
-  const loadTexture = (region, type = 'Human') => {
+  const loadTexture = (region:any, type = 'Human') => {
 
-    let sheet;
-    const textures = [];
-    loadAssets(`/assets/img/hero/${region}/${type}.png`, (assets) => {
+    let sheet:any;
+    const textures:any = [];
+    loadAssets(`/assets/img/hero/${region}/${type}.png`, (assets:any) => {
       sheet = PIXI.Texture.from(assets);
 
       for (let i = 0; i < Actions[action].step; i++) {

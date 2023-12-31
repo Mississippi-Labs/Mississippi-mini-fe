@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "codegen": "graphql-codegen",
-    "create-components": "npx @dojoengine/core ../dojo-starter/target/dev/manifest.json src/dojo/contractComponents.ts http://localhost:5050 0x33ac2f528bb97cc7b79148fd1756dc368be0e95d391d8c6d6473ecb60b4560e"
+    "create-components": "npx @dojoengine/core src/abi/manifest.json src/dojo/contractComponents.ts https://api.cartridge.gg/x/mississippi/katana 0x1374ef8311b490e1a3ae8e63f4cb1c602e6620d4a7bd87c66c44152b27770b4"
   },
   "dependencies": {
     "@dojoengine/core": "0.2.10",

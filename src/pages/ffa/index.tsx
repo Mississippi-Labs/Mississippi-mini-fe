@@ -8,17 +8,55 @@ import DuelField, { IDuelFieldMethod } from '@/components/DuelField';
 import { playerA, playerB, Rank1, Rank2 } from '@/mock/data';
 import { ethers } from 'ethers';
 
-import miniAbi from '@/abi/mississippi_mini-game.json';
 import { Skills } from '@/config/hero';
 import { type } from 'os';
 
 const rpc = 'https://starknet-goerli.infura.io/v3/5ca372516740427e97512d4dfefd9c47';
 const key = '0x1374ef8311b490e1a3ae8e63f4cb1c602e6620d4a7bd87c66c44152b27770b4';
+import { useEntityQuery } from '@dojoengine/react'
+import { Has, getComponentValue } from "@dojoengine/recs";
+import { useDojo } from "../../DojoContext";
+import { set } from 'mobx';
 
 const FFA = () => {
+  const {
+    setup: {
+      components: { BattleInfo, BattleResult, Player, Skill, Role, Global },
+      systemCalls: { chooseSkill, chooseRole, startBattle, initRole, initSkill },
+    },
+    account: {
+      clear,
+      create: createAccount,
+      account,
+      list,
+      select
+    },
+  } = useDojo()
 
+  const RoleData = useEntityQuery([Has(Role)]).map((entity) => getComponentValue(Role, entity));
+  const PlayerData:any = useEntityQuery([Has(Player)]).map((entity) => {
+    let player = getComponentValue(Player, entity);
+    let addr:any = player?.addr;
+    const bn = BigInt(addr);
+    const hex = bn.toString(16);
+    let role = RoleData.find((role:any) => role.id == player?.roleId);
+    return {
+      ...role,
+      ...player,
+      addr: '0x' + hex,
+    }
+  });
+  const SkillData = useEntityQuery([Has(Skill)]).map((entity) => getComponentValue(Skill, entity));
+  const BattleInfoData = useEntityQuery([Has(BattleInfo)]).map((entity) => getComponentValue(BattleInfo, entity));
+  const BattleResultData = useEntityQuery([Has(BattleResult)]).map((entity) => getComponentValue(BattleResult, entity));
+  console.log(SkillData, RoleData, PlayerData, 'SkillData')
+  console.log(BattleInfoData, BattleResultData, 'BattleInfoData')
+  const GlobalData = useEntityQuery([Has(Global)]).map((entity) => getComponentValue(Global, entity));
+  console.log(GlobalData, 'GlobalData')
+
+  const curPlayer = PlayerData.find((player: any) => player.addr.toLocaleLowerCase() == account.address.toLocaleLowerCase()) || {};
+  
   const [tab, setTab] = useState('home');
-
   const [dialogVisible, setDialogVisible] = useState(false);
   const [nameDialogVisible, setNameDialogVisible] = useState(false);
   const [skillDialogVisible, setSkillDialogVisible] = useState(false);
@@ -37,49 +75,78 @@ const FFA = () => {
   const [rankData, setRankData] = useState(Rank1);
 
   const [player, setPlayer] = useState();
+  const [skillVisible, setSkillVisible] = useState(false);
+  const [skillId, setSkillId] = useState(0);
+  const [battleId, setBattleId] = useState(-1);
+
+  const targetData:any = useRef();
+
+  const chooseRoleFun = async () => {
+    console.log(account, 'account')
+    // 随机0or1
+    let id = Math.floor(Math.random() * 2);
+    await chooseRole(account, id);
+  }
+
+  const showDialog = (index:any) => {
+    let player:any = PlayerData[index];
+    targetData.current = player;
+    setDialogVisible(true);
+  }
+
+  const closeDialog = () => {
+    targetData.current = null;
+    setDialogVisible(false);
+    setSkillVisible(false)
+  }
+
+  const battleFun = async () => {
+    let addr = targetData.current.addr;
+    closeDialog()
+    await chooseSkill(account, skillId);
+    let event = await startBattle(account, addr)
+    let battleId = event?.[0]?.data?.[5] || ''
+    battleId = Number(battleId)
+    setBattleId(battleId)
+  }
+
+  const formatAddress = (addr:string) => {
+    return addr.slice(0, 6) + '...' + addr.slice(-6);
+  }
 
   useEffect(() => {
-    try {
-      // const provider = new ethers.providers.JsonRpcProvider(rpc)
-      // const wallet = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);
-      // const contact = new ethers.Contract(key, miniAbi.abi, wallet);
-    } catch (e) {
-      console.log(e)
+    let battleResultData:any = BattleResultData.find((item:any) => item.battleId == battleId);
+    if (battleResultData) {
+      let win = battleResultData?.winner;
+      console.log(battleResultData, 'win')
+      const bn = BigInt(win);
+      const hex = bn.toString(16);
+      let winner = '0x' + hex;
+      alert(winner == account.address ? 'You win!' : 'You lose!')
+      setBattleId(-1)
+    }
+  }, [battleId])
+
+  useEffect(() => {
+    setSkillId(curPlayer?.skillId)
+  }, [curPlayer?.skillId])
+
+  useEffect(() => {
+    const init = async () => {
+      clear();
+      const newAccount = await createAccount();
+      console.log(newAccount, 'newAccount')
+      select(newAccount.address);
+      localStorage.setItem('isFirst', '2');
+    }
+    let isFirst:any = localStorage.getItem('isFirst');
+    console.log(isFirst, 'isFirst')
+    if (isFirst != 2) {
+      init()
     }
 
-  }, []);
+  }, [])
 
-  // useEffect(() => {
-  //   if (fighting) {
-  //     const interval = setInterval(() => {
-  //       battleRef.current?.leftAttack('sprint');
-  //       defer.hp -= attacker.attack - defer.def;
-  //       if (defer.hp <= 0) {
-  //         defer.hp = 0;
-  //         clearInterval(interval);
-  //         showBattleResult('win');
-  //         // setTimeout(() => {
-  //         //   battleRef.current?.kill('right');
-  //         // }, 1000)
-  //       } else {
-  //         setTimeout(() => {
-  //           battleRef.current?.rightAttack('sprint');
-  //           attacker.hp -= defer.attack - attacker.def;
-  //           if (attacker.hp <= 0) {
-  //             attacker.hp = 0;
-  //             clearInterval(interval);
-  //             showBattleResult('lose');
-  //             // setTimeout(() => {
-  //             //   battleRef.current?.kill('left');
-  //             // }, 1000)
-  //           }
-  //           setAttacker({...attacker});
-  //         }, 3000)
-  //       }
-  //       setDefer({...defer});
-  //     }, 8000);
-  //   }
-  // }, [fighting]);
 
   useEffect(() => {
     if (round > 0) {
@@ -197,6 +264,8 @@ const FFA = () => {
                 }</button>
               )
             }
+            {/*<UserInfo player={curPlayer} />*/}
+            {/*<button className="mi-btn" onClick={chooseRoleFun}>Mint</button>*/}
           </>
         }
 
@@ -207,32 +276,47 @@ const FFA = () => {
               <div className="leaderboard-wrapper">
                 <ul className={'leaderboard-list'}>
                   {
-                    rankData.map((data, index) => {
-                      return (
-                        <li className={'rank-row'}>
-                          <div className="rank-num">{index + 1}</div>
-                          <div className="username">{data.name}</div>
-                          <div className="addr">{data.address}</div>
-                          <div className="win-count">V{data.win}</div>
-                          <div className="lose-count">D{data.lose}</div>
-                          {
-                            data.name !== 'Alice' && (
-                              <div
-                                className="fight-icon"
-                                onClick={() => {
-                                  setDialogVisible(true);
-                                }}
-                              >
-                                <img src={fightIcon} alt="fight"/>
-                              </div>
-                            )
-                          }
+                  //   rankData.map((data, index) => {
+                  //     return (
+                  //       <li className={'rank-row'}>
+                  //         <div className="rank-num">{index + 1}</div>
+                  //         <div className="username">{data.name}</div>
+                  //         <div className="addr">{data.address}</div>
+                  //         <div className="win-count">V{data.win}</div>
+                  //         <div className="lose-count">D{data.lose}</div>
+                  //         {
+                  //           data.name !== 'Alice' && (
+                  //             <div
+                  //               className="fight-icon"
+                  //               onClick={() => {
+                  //                 setDialogVisible(true);
+                  //               }}
+                  //             >
+                  //               <img src={fightIcon} alt="fight"/>
+                  //             </div>
+                  //           )
+                  //         }
+                  //
+                  //       </li>
+                  //     )
+                  //   })
+                  // }
 
-                        </li>
-                      )
-                    })
+                    PlayerData.map((item:any, index:any) => (
+                      <li className={'rank-row'} key={index}>
+                        <div className="rank-num">{item.name.toString()}</div>
+                        <div className="addr">{formatAddress(item.addr.toString())}</div>
+                        <div className="win-count">V2</div>
+                        <div className="lose-count">D6</div>
+                        <div
+                          className="fight-icon"
+                          onClick={() => showDialog(index)}
+                        >
+                          <img src={fightIcon} alt="fight"/>
+                        </div>
+                      </li>
+                    ))
                   }
-
                 </ul>
                 <div className="my-rank-info rank-row">
                   <div className="rank-num">{rankData.findIndex(item => item.name === 'Alice') + 1}</div>
@@ -272,22 +356,38 @@ const FFA = () => {
       <Dialog visible={dialogVisible}>
         <div className={'dialog-user'}>
           <div className="dialog-userinfo">
-            <div className="username">{defer.name}</div>
+{/*            <div className="username">{defer.name}</div>*/}
+{/*            <dl>*/}
+{/*              <dt>HP</dt>*/}
+{/*              <dd>{defer.maxHp}</dd>*/}
+{/*            </dl>*/}
+{/*            <dl>*/}
+{/*              <dt>Attack</dt>*/}
+{/*              <dd>{defer.attack}</dd>*/}
+{/*            </dl>*/}
+{/*            <dl>*/}
+{/*              <dt>Defense</dt>*/}
+{/*              <dd>{defer.def}</dd>*/}
+{/*            </dl>*/}
+{/*            <dl>*/}
+{/*              <dt>Speed</dt>*/}
+{/*              <dd>{defer.speed}</dd>*/}
+{/*=======*/}
             <dl>
               <dt>HP</dt>
-              <dd>{defer.maxHp}</dd>
+              <dd>{targetData?.current?.hp}</dd>
             </dl>
             <dl>
               <dt>Attack</dt>
-              <dd>{defer.attack}</dd>
+              <dd>{targetData?.current?.attack}</dd>
             </dl>
             <dl>
               <dt>Defense</dt>
-              <dd>{defer.def}</dd>
+              <dd>{targetData?.current?.defense}</dd>
             </dl>
             <dl>
               <dt>Speed</dt>
-              <dd>{defer.speed}</dd>
+              <dd>{targetData?.current?.speed}</dd>
             </dl>
           </div>
 
@@ -298,11 +398,10 @@ const FFA = () => {
                 setBattleVisible(true);
                 setDialogVisible(false);
               }}>Battle</button>
+            {/*<button className="battle-opt mi-btn" onClick={() => setSkillVisible(true)}>Battle</button>*/}
             <button
               className="battle-opt mi-btn"
-              onClick={() => {
-                setDialogVisible(false);
-              }}
+              onClick={closeDialog}
             >OK</button>
 
           </div>
@@ -424,7 +523,6 @@ const FFA = () => {
           </div>
         )
       }
-
     </div>
   );
 };

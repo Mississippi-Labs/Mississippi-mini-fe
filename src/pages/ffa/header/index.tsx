@@ -4,8 +4,7 @@ import './styles.scss';
 import imgTwitter from '@/assets/img/icon_tw.png';
 import imgDiscord from '@/assets/img/icon_d.png';
 import UserAddress from '@/components/UserAddress';
-// import { useMUD } from '@/mud/MUDContext';
-import { ethers } from 'ethers';
+import { useDojo } from "../../../DojoContext";
 
 interface IProps {
   onPlayBtnClick: () => void;
@@ -15,8 +14,16 @@ interface IProps {
 
 const HomeHeader = (props: IProps) => {
 
-  const [walletAddress, setWalletAddress] = useState('');
-  const [walletBalance, setWalletBalance] = useState('');
+  const [walletBalance, setWalletBalance] = useState('0');
+
+  const {
+    account: {
+      account,
+    },
+  } = useDojo()
+
+  const walletAddress = account.address
+
 
 
   return (

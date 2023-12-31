@@ -8,22 +8,8 @@ import './common.scss';
 import FFA from './pages/ffa';
 
 function App() {
-    // const {
-    //     setup: {
-    //         systemCalls: { spawn, move },
-    //         components: { Moves, Position },
-    //     },
-    //     account: {
-    //         create,
-    //         list,
-    //         select,
-    //         account,
-    //         isDeploying,
-    //         clear,
-    //         copyToClipboard,
-    //         applyFromClipboard,
-    //     },
-    // } = useDojo();
+    const res = useDojo();
+    console.log(res)
     //
     // const [clipboardStatus, setClipboardStatus] = useState({
     //     message: "",

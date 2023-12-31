@@ -5,16 +5,18 @@ import Player, { IPlayer } from '@/components/PIXIPlayers/Player';
 import fightIcon from '@/assets/img/fight-icon.png';
 import { Skills } from '@/config/hero';
 
+
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
 export interface IUserInfo {
-  player?: IPlayer;
+  player?: any;
 }
 
 const UserInfo = (props: IUserInfo) => {
 
   const { player } = props;
-  const lootHasLoaded = player?.equip?.handheld && player?.equip?.head && player?.equip?.clothes;
+  const lootHasLoaded = player?.addr;
+  console.log(player, 'player')
 
   return (
     <div className={'ffa-userinfo-wrapper'}>

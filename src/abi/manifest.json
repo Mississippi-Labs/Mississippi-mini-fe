@@ -948,7 +948,7 @@
   "contracts": [
     {
       "name": "mississippi_mini::config::config",
-      "address": "0xd25bdceafa4b66d6b095783ede84dfbd225efa3e4830e4ade7a70cf880f1f9",
+      "address": "0x4fd20c9926eed38710cabeef8edd59206ab4887a52698661d182017bd99dcd8",
       "class_hash": "0x6419b851ed4c14ea9d37fba6a8084658aaa3e0803e25063af10afe852d75c60",
       "abi": [
         {
@@ -1099,7 +1099,7 @@
     },
     {
       "name": "mississippi_mini::game::game",
-      "address": "0x6309fc604e678a9eade7c4dc6223abb11237e944e3487d135ba6a4cc774c8fc",
+      "address": "0x3cb6e52cf4c799be8c298b1e6178990e01976cd405d9e16772081f1b815babe",
       "class_hash": "0x21696c783816ff404bd6e7b34e5bd7a0ebd404386f0be308930f64d5890a651",
       "abi": [
         {

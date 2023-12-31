@@ -7,8 +7,6 @@ export function createClientComponents({
     contractComponents,
 }: SetupNetworkResult) {
     return {
-        ...contractComponents,
-        Position: overridableComponent(contractComponents.Position),
-        Moves: overridableComponent(contractComponents.Moves),
+        ...contractComponents
     };
 }

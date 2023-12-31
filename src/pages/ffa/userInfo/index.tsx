@@ -13,7 +13,8 @@ export interface IUserInfo {
 const UserInfo = (props: IUserInfo) => {
 
   const { player } = props;
-  const lootHasLoaded = player?.equip?.handheld && player?.equip?.head && player?.equip?.clothes;
+  const lootHasLoaded = player?.addr;
+  console.log(player, 'player')
 
   return (
     <div className={'ffa-userinfo-wrapper'}>
@@ -32,19 +33,19 @@ const UserInfo = (props: IUserInfo) => {
             <div className={`user-attr-wrapper ffa-info-box ${lootHasLoaded ? 'loaded' : ''}`}>
               <dl>
                 <dt>HP</dt>
-                <dd><span className="base-attr">0</span></dd>
+                <dd><span className="base-attr">{player?.hp}</span></dd>
               </dl>
               <dl>
                 <dt>Attack</dt>
-                <dd><span className="base-attr">0</span></dd>
+                <dd><span className="base-attr">{player?.attack}</span></dd>
               </dl>
               <dl>
                 <dt>Defense</dt>
-                <dd><span className="base-attr">0</span></dd>
+                <dd><span className="base-attr">{player?.defense}</span></dd>
               </dl>
               <dl>
                 <dt>Speed</dt>
-                <dd><span className="base-attr">0</span></dd>
+                <dd><span className="base-attr">{player?.speed}</span></dd>
               </dl>
             </div>
 

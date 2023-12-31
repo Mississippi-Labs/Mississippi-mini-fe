@@ -7,49 +7,114 @@ import Dialog from '@/pages/ffa/dialog';
 import DuelField from '@/components/DuelField';
 import { playerA, playerB } from '@/mock/data';
 import { useEntityQuery } from '@dojoengine/react'
-import { Has } from "@dojoengine/recs";
+import { Has, getComponentValue } from "@dojoengine/recs";
 import { useDojo } from "../../DojoContext";
-
+import { set } from 'mobx';
 
 const FFA = () => {
   const {
     setup: {
-      components: { Config, Global, Player },
-      systemCalls: { spawn },
+      components: { BattleInfo, BattleResult, Player, Skill, Role },
+      systemCalls: { chooseSkill, chooseRole, startBattle },
     },
     account: {
-      create,
-      list,
-      select,
-      account,
-      isDeploying,
       clear,
-      copyToClipboard,
-      applyFromClipboard,
+      create,
+      account,
+      list,
+      select
     },
   } = useDojo()
 
-  const configData = useEntityQuery([Has(Config)], {updateOnValueChange: true})
-  const GlobalData = useEntityQuery([Has(Global)])
-  const PlayerData = useEntityQuery([Has(Player)])
-  console.log(configData, GlobalData, PlayerData, 'configData')
+  const RoleData = useEntityQuery([Has(Role)]).map((entity) => getComponentValue(Role, entity));
+  const PlayerData:any = useEntityQuery([Has(Player)]).map((entity) => {
+    let player = getComponentValue(Player, entity);
+    let addr = player?.addr;
+    const bn = BigInt(addr);
+    const hex = bn.toString(16);
+    let role = RoleData.find((role:any) => role.id == player?.roleId);
+    return {
+      ...role,
+      ...player,
+      addr: '0x' + hex,
+    }
+  });
+  const SkillData = useEntityQuery([Has(Skill)]).map((entity) => getComponentValue(Skill, entity));
+  const BattleInfoData = useEntityQuery([Has(BattleInfo)]).map((entity) => getComponentValue(BattleInfo, entity));
+  const BattleResultData = useEntityQuery([Has(BattleResult)]).map((entity) => getComponentValue(BattleResult, entity));
+  console.log(SkillData, RoleData, PlayerData, 'SkillData')
+  console.log(BattleInfoData, BattleResultData, 'BattleInfoData')
+
+  const curPlayer = PlayerData.find((player: any) => player.addr.toLocaleLowerCase() == account.address.toLocaleLowerCase()) || {};
   
   const [tab, setTab] = useState('home');
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [battleVisible, setBattleVisible] = useState(false);
+  const [skillVisible, setSkillVisible] = useState(false);
+  const [skillId, setSkillId] = useState(0);
+  const [battleId, setBattleId] = useState(-1);
   const battleRef = useRef();
+  
+  const targetData:any = useRef();
+
+  const chooseRoleFun = async () => {
+    console.log(account, 'account')
+    // 随机0or1
+    let id = Math.floor(Math.random() * 2);
+    await chooseRole(account, id);
+  }
+
+  const showDialog = (index:any) => {
+    let player:any = PlayerData[index];
+    targetData.current = player;
+    setDialogVisible(true);
+  }
+
+  const closeDialog = () => {
+    targetData.current = null;
+    setDialogVisible(false);
+    setSkillVisible(false)
+  }
+
+  const battleFun = async () => {
+    let addr = targetData.current.addr;
+    closeDialog()
+    await chooseSkill(account, skillId);
+    let event = await startBattle(account, addr)
+    let battleId = event?.[0]?.data?.[5] || ''
+    battleId = Number(battleId)
+    setBattleId(battleId)
+  }
+
+  const formatAddress = (addr:string) => {
+    return addr.slice(0, 6) + '...' + addr.slice(-6);
+  }
 
   useEffect(() => {
-    // spawn(account)
-    try {
-      // const provider = new ethers.providers.JsonRpcProvider(rpc)
-      // const wallet = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);
-      // const contact = new ethers.Contract(key, miniAbi.abi, wallet);
-    } catch (e) {
-      console.log(e)
+    let battleResultData:any = BattleResultData.find((item:any) => item.battleId == battleId);
+    if (battleResultData) {
+      let win = battleResultData?.winner;
+      console.log(battleResultData, 'win')
+      const bn = BigInt(win);
+      const hex = bn.toString(16);
+      let winner = '0x' + hex;
+      alert(winner == account.address ? 'You win!' : 'You lose!')
+      setBattleId(-1)
     }
+  }, [battleId])
 
-  }, []);
+  useEffect(() => {
+    setSkillId(curPlayer?.skillId)
+  }, [curPlayer?.skillId])
+
+  useEffect(() => {
+    // const init = async () => {
+    //   clear();
+    //   const newAccount = await create();
+    //   console.log(newAccount, 'newAccount')
+    //   select(newAccount.address);
+    // }
+    // init()
+  }, [])
 
   return (
     <div className={'ffa-page'}>
@@ -72,8 +137,8 @@ const FFA = () => {
         </div>
         {
           tab === 'home' && <>
-            <UserInfo/>
-            <button className="mi-btn">Mint and Go</button>
+            <UserInfo player={curPlayer} />
+            <button className="mi-btn" onClick={chooseRoleFun}>Mint</button>
           </>
         }
 
@@ -83,21 +148,22 @@ const FFA = () => {
               <h3>Leaderboard</h3>
               <div className="leaderboard-wrapper">
                 <ul className={'leaderboard-list'}>
-                  <li className={'rank-row'}>
-                    <div className="rank-num">1</div>
-                    <div className="username">Bob</div>
-                    <div className="addr">0x34..35</div>
-                    <div className="win-count">V2</div>
-                    <div className="lose-count">D6</div>
-                    <div
-                      className="fight-icon"
-                      onClick={() => {
-                        setDialogVisible(true);
-                      }}
-                    >
-                      <img src={fightIcon} alt="fight"/>
-                    </div>
-                  </li>
+                  {
+                    PlayerData.map((item, index) => (
+                      <li className={'rank-row'} key={index}>
+                        <div className="rank-num">{item.name.toString()}</div>
+                        <div className="addr">{formatAddress(item.addr.toString())}</div>
+                        <div className="win-count">V2</div>
+                        <div className="lose-count">D6</div>
+                        <div
+                          className="fight-icon"
+                          onClick={() => showDialog(index)}
+                        >
+                          <img src={fightIcon} alt="fight"/>
+                        </div>
+                      </li>
+                    ))
+                  }
                 </ul>
                 <div className="my-rank-info rank-row">
                   <div className="rank-num">12</div>
@@ -129,78 +195,64 @@ const FFA = () => {
       <Dialog visible={dialogVisible}>
         <div className={'dialog-user'}>
           <div className="dialog-userinfo">
-            <div className="username">AA</div>
             <dl>
               <dt>HP</dt>
-              <dd>100</dd>
+              <dd>{targetData?.current?.hp}</dd>
             </dl>
             <dl>
               <dt>Attack</dt>
-              <dd>100</dd>
+              <dd>{targetData?.current?.attack}</dd>
             </dl>
             <dl>
               <dt>Defense</dt>
-              <dd>100</dd>
+              <dd>{targetData?.current?.defense}</dd>
             </dl>
             <dl>
               <dt>Speed</dt>
-              <dd>10</dd>
+              <dd>{targetData?.current?.speed}</dd>
             </dl>
           </div>
 
           <div className="dialog-opt">
-            <button className="battle-opt mi-btn" onClick={() => setBattleVisible(true)}>Battle</button>
+            <button className="battle-opt mi-btn" onClick={() => setSkillVisible(true)}>Battle</button>
             <button
               className="battle-opt mi-btn"
-              onClick={() => {
-                setDialogVisible(false);
-              }}
+              onClick={closeDialog}
             >OK</button>
 
           </div>
         </div>
       </Dialog>
-      {
-        battleVisible && (
-          <div className="ffa-battle-dialog">
-            <div className="battle-user-info player1">
-              <div className="battle-user-info-detail">
-                <div className="username">Alic</div>
-                <div>ATK 10</div>
-                <div>DEF 10</div>
-                <div>SPD 10</div>
+      {skillVisible ? (
+        <div className="skill-wrap">
+          <div>
+            <div className="skill-list">
+              <div className="skill-item" onClick={() => setSkillId(0)}>
+                <div className="placeholder" style={{borderColor: skillId == 0 ? 'red' : '#DCC7AF'}}></div>
+                <div>HP Boost</div>
               </div>
-
-              <div className="hp-wrapper">
-                <div className="hp" style={{ width: '50%' }}>100/200</div>
+              <div className="skill-item" onClick={() => setSkillId(1)}>
+                <div className="placeholder" style={{borderColor: skillId == 1 ? 'red' : '#DCC7AF'}}></div>
+                <div>SPD Surge</div>
               </div>
-            </div>
-
-            <div className="battle-user-info player2">
-              <div className="battle-user-info-detail">
-                <div className="username">Bob</div>
-                <div>ATK 10</div>
-                <div>DEF 10</div>
-                <div>SPD 10</div>
-              </div>
-
-              <div className="hp-wrapper">
-                <div className="hp" style={{ width: '50%' }}>120/240</div>
+              <div className="skill-item" onClick={() => setSkillId(2)}>
+                <div className="placeholder" style={{borderColor: skillId == 2 ? 'red' : '#DCC7AF'}}></div>
+                <div>Chain ATK</div>
               </div>
             </div>
-
-            <DuelField
-              ref={battleRef}
-              leftPlayer={playerA}
-              rightPlayer={playerB}
-              afterAttack={() => {
-                console.log('attack')
-              }}
-            />
+            <div className="desc">
+              <p>Select one of the three skills for the battle:</p>
+              <p>HP Boost: Increases HP by 100.</p>
+              <p>SPD Surge: Boosts speed by 100.</p>
+              <p>Chain ATK: 20% chance of a consecutive attack.</p>
+            </div>
+            <div className="btn-list">
+              <button className="battle-opt mi-btn" onClick={() => setSkillVisible(false)}>Cancel</button>
+              <button className="battle-opt mi-btn" onClick={battleFun}>OK</button>
+            </div>
           </div>
-        )
-      }
-
+        </div>
+      ) : null}
     </div>
   );
 };

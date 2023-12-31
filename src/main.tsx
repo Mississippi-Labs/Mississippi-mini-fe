@@ -11,7 +11,6 @@ async function init() {
     const root = ReactDOM.createRoot(rootElement as HTMLElement);
 
     const setupResult = await setup();
-    console.log(setupResult);
     root.render(
         <React.StrictMode>
             <DojoProvider value={setupResult}>

@@ -1,123 +1,93 @@
 import { SetupNetworkResult } from "./setupNetwork";
 import { Account } from "starknet";
-import { Entity, getComponentValue } from "@dojoengine/recs";
-import { uuid } from "@latticexyz/utils";
-import { ClientComponents } from "./createClientComponents";
-import { Direction, updatePositionWithDirection } from "../utils";
 import {
     getEntityIdFromKeys,
     getEvents,
     setComponentsFromEvents,
 } from "@dojoengine/utils";
 
-export type SystemCalls = ReturnType<typeof createSystemCalls>;
-
 export function createSystemCalls(
-    { execute, contractComponents }: SetupNetworkResult,
-    { Position, Moves }: ClientComponents
+    { execute }: SetupNetworkResult
 ) {
-    const spawn = async (signer: Account) => {
-        const entityId = getEntityIdFromKeys([
-            BigInt(signer.address),
-        ]) as Entity;
-
-        const positionId = uuid();
-        Position.addOverride(positionId, {
-            entity: entityId,
-            value: { player: BigInt(entityId), vec: { x: 10, y: 10 } },
-        });
-
-        const movesId = uuid();
-        Moves.addOverride(movesId, {
-            entity: entityId,
-            value: {
-                player: BigInt(entityId),
-                remaining: 100,
-                last_direction: 0,
-            },
-        });
-
+    const initRole = async (signer: Account) => {
         try {
-            const { transaction_hash } = await execute(
+            await execute(
                 signer,
-                "actions",
-                "spawn",
+                "mississippi_mini::config::config",
+                "init_role",
                 []
             );
-
-            setComponentsFromEvents(
-                contractComponents,
-                getEvents(
-                    await signer.waitForTransaction(transaction_hash, {
-                        retryInterval: 100,
-                    })
-                )
-            );
         } catch (e) {
             console.log(e);
-            Position.removeOverride(positionId);
-            Moves.removeOverride(movesId);
-        } finally {
-            Position.removeOverride(positionId);
-            Moves.removeOverride(movesId);
         }
     };
 
-    const move = async (signer: Account, direction: Direction) => {
-        const entityId = getEntityIdFromKeys([
-            BigInt(signer.address),
-        ]) as Entity;
-
-        const positionId = uuid();
-        Position.addOverride(positionId, {
-            entity: entityId,
-            value: {
-                player: BigInt(entityId),
-                vec: updatePositionWithDirection(
-                    direction,
-                    getComponentValue(Position, entityId) as any
-                ).vec,
-            },
-        });
-
-        const movesId = uuid();
-        Moves.addOverride(movesId, {
-            entity: entityId,
-            value: {
-                player: BigInt(entityId),
-                remaining:
-                    (getComponentValue(Moves, entityId)?.remaining || 0) - 1,
-            },
-        });
-
+    const initSkill = async (signer: Account, skill:any) => {
         try {
-            const { transaction_hash } = await execute(
+            let {transaction_hash} = await execute(
                 signer,
-                "actions",
-                "move",
-                [direction]
-            );
-
-            setComponentsFromEvents(
-                contractComponents,
-                getEvents(
-                    await signer.waitForTransaction(transaction_hash, {
-                        retryInterval: 100,
-                    })
-                )
+                "mississippi_mini::config::config",
+                "init_skill",
+                [skill]
             );
         } catch (e) {
             console.log(e);
-            Position.removeOverride(positionId);
-            Moves.removeOverride(movesId);
-        } finally {
-            Position.removeOverride(positionId);
-            Moves.removeOverride(movesId);
         }
     };
+
+    
+
+    const chooseRole = async (signer: Account, role: any) => {
+        try {
+            await execute(
+                signer,
+                "mississippi_mini::game::game",
+                "choose_role",
+                [role]
+            );
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const chooseSkill = async (signer: Account, skill: any) => {
+        try {
+            await execute(
+                signer,
+                "mississippi_mini::game::game",
+                "choose_skill",
+                [skill]
+            );
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const startBattle = async (signer: Account, target: any) => {
+        try {
+            let {transaction_hash} = await execute(
+                signer,
+                "mississippi_mini::game::game",
+                "start_battle",
+                [target]
+            );
+            // return transaction_hash;
+            let event = getEvents(
+                await signer.waitForTransaction(transaction_hash, {
+                    retryInterval: 300,
+                })
+            )
+            return event
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     return {
-        spawn,
-        move,
+        chooseRole,
+        initRole,
+        initSkill,
+        startBattle,
+        chooseSkill
     };
 }

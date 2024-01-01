@@ -313,7 +313,7 @@ const FFA = () => {
                   curPlayer?.addr && (
                     <div className="my-rank-info rank-row">
                       <div className="rank-num">{PlayerData.findIndex(item => item.addr === curPlayer?.addr) + 1}</div>
-                      <div className="username">{curPlayer.name}</div>
+                      {/*<div className="username">{curPlayer.name}</div>*/}
                       <div className="addr">{formatAddress(curPlayer.addr)}</div>
                       <div className="win-count">V{curPlayer.countOfWin}</div>
                       {/*<div className="lose-count">D{curPlayer.lose}</div>*/}
@@ -485,7 +485,7 @@ const FFA = () => {
             </ul>
 
             <ul className="skill-list defer-skill">
-              <li className={`skill-item skill-atk`}>
+              <li className={`skill-item skill-${Skills[targetData?.current?.skillId]?.type}`}>
               </li>
             </ul>
 

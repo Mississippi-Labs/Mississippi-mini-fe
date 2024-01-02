@@ -26,6 +26,6 @@ dist-ssr
 
 *.lock
 *.lock.json
-*.lock.yaml
+*-lock.yaml
 
 /public/assets/img/**/*.meta
